@@ -1,5 +1,9 @@
 # CS-study
 
+#### 참고하면 좋을 사이트
+
+- https://roadmap.sh/
+
 #### 참가자 : 김민준, 정지원
 
 #### Rule

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MVC Example</title>
+</head>
+<body>
+  <h1>Counter</h1>
+  <p>Current value: <span id="counter">0</span></p>
+  <button id="incrementBtn">Increment</button>
+  <button id="decrementBtn">Decrement</button>
+  <script src="mvc.js"></script>
+</body>
+<script>
+  // 모델
+  const model = {
+    data: { counter: 0 },
+    increment: function() {
+      this.data.counter++;
+      return this.data.counter;
+    },
+    decrement: function() {
+      this.data.counter--;
+      return this.data.counter;
+    },
+  };
+
+  // 뷰
+  const view = {
+    render: function(counter) {
+      document.getElementById("counter").innerHTML = counter;
+    },
+  };
+
+  // 컨트롤러
+  const controller = {
+    increment: function() {
+      const counter = model.increment();
+      view.render(counter);
+    },
+    decrement: function() {
+      const counter = model.decrement();
+      view.render(counter);
+    },
+  };
+
+  // 사용자 입력(action) 처리
+  document.getElementById("incrementBtn").addEventListener("click", function() {
+    controller.increment();
+  });
+
+  document.getElementById("decrementBtn").addEventListener("click", function() {
+    controller.decrement();
+  });
+</script>
+</html>
