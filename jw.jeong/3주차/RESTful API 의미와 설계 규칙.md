@@ -41,7 +41,7 @@
 - **REST 구성요소**
   - 자원(Resouce) : URI
     - 모든 자원에 고유한 ID가 존재하고, 이 자원은 Server에 존재한다.
-    - 자원을 구별하 ID는 "/userinfo/user_id"와 같은 URI이다.
+    - 자원을 구별하는 ID는 "/userinfo/user_id"와 같은 URI이다.
     - Client는 URI를 이용해서 자원을 지정하고, 해당 자원의 상태(정보)에 대한 조작을 Server에 요청한다.
   - 행위(Verb) : HTTP Method
     - HTTP 프로토콜의 Method를 사용한다.
@@ -71,5 +71,13 @@
 REST의 아키텍처 스타일을 따른 시스템을 RESTful이란 용어로 표현된다.
 
 즉, RESTful API는 REST 원칙을 따르는 API를 의미한다.
+
+
+
+# 문제
+1. 다음 URI는 REST 기반의 설계일까요?
+   - https://api.odcloud.kr/v1/get/page_info/page=1/per_page=10
+   
+2. 1번에 대한 문제의 답을 말하시고 설명하세요.
 
 
