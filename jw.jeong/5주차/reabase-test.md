@@ -1,84 +1,96 @@
-# RESTful API 의미와 설계규칙
-
-## REST란?
-- **REST의 정의**
-  - "Representational State Transfer"의 약자이다.
-    1. 자원의 이름(자원의 표현)으로 구분하여 해당 자원의 상태(정보를)를 주고 받는 모든 것을 의미.
-       - 즉, **자원**(resource)의 **표현**(representational)에 의한 **상태**(state) **전달**(transfer).
-         - 자원 : 문서, 이미지, 데이터 등
-         - 자원의 표현 : 자원을 표현하기 위한 이름
-           - ex) DB의 학생 정보가 자원일 때, "students"를 자원의 표현으로 정한다.
-    
-    2. 상태(정보)전달
-         - 데이터가 요청(request)이 되어지는 시점에서 자원의 상태(정보)를 전달(response)한다.
-         - JSON or XML을 통해 데이터를 주고 받는 것이 일반적이다.
-    
-    3. REST는 기본적으로 웹의 기존 기술 HTTP의 프로토콜 그대로 활용하기 때문 웹의 장점을 최대한 활용할 수 있는 아키텍처 스타일.
-    4. REST는 네트워크 상에서 Client와 Server사이의 통신 방식중 하나이다.
-    5. push test
-  
+# MVI
 
 
-- **REST의 구체적 개념**
-  - HTTP URI를 통해 자원(resource)을 명시하고, HTTP 메소드를 통해서 해당 자원에 대한 CRUD 연산을 적용하는 것을 의미.
-  - CURD란?
-    - Create(생성) : POST
-    - Read(조회) : GET
-    - Update(수정) : PUT
-    - Delete(삭제) : DELETE
-    
+MVI란?
 
+`Model`, `View`, `Intent`로 MVVM에서 다수의 입출력으로 인해 `상태 문제`와 `부수효과`를 해결하기 위해 나온 디자인패턴이다. UDF(단방향 데이터 흐름)
+를 사용하며, 기존 디자인 패턴과는 다른방식으로 작동한다.
 
-- **REST의 특징**
-  - Server-Client 구조
-    - 자원이 있는 쪽이 Server, 요청한 쪽이 Client
-  - Stateless(무상태)
-    - HTTP 프로토콜은 Stateless Protocol이므로 REST역 무상태성을 갖는다.
-    - Client의 context를 저장하지 않는다. ex) 쿠키, 세션
-  - Cacheable(캐시 처리 기능)
-    - 캐시 사용을 통해 응답(response)시간이 빨라지고, 트랜잭션이 발생하지 않기 때문 전체 응답시간, 성능, 서버의 자원 이용률이 향상된다.
-
-
-- **REST 구성요소**
-  - 자원(Resouce) : URI
-    - 모든 자원에 고유한 ID가 존재하고, 이 자원은 Server에 존재한다.
-    - 자원을 구별하는 ID는 "/userinfo/user_id"와 같은 URI이다.
-    - Client는 URI를 이용해서 자원을 지정하고, 해당 자원의 상태(정보)에 대한 조작을 Server에 요청한다.
-  - 행위(Verb) : HTTP Method
-    - HTTP 프로토콜의 Method를 사용한다.
-    - GET, POST, PUT, DELETE
-  - 표현(Representation of Resource)
-    - Client가 자원의 상태(정보)를 요청(Request)하면 Server는 요청에 대한 적절한 응답(Response)를 보낸다.
-    - REST에서 하나의 자원은 JSON, XML, RSS등 여러 형태로 나타내질 수 있다.
-    - 보통은 JSON, XML을 통 데이터를 주고받는 것이 일반적이다.
-
-
-## REST API란?
- - API : 데이터와 기능의 집, 서로 정보를 교환가능 하도록 하는 것.
- - REST API : 위에 설명한 REST를 기반으로 서비스 API를 구현한 것.
-
-## REST API 설계 규칙
-1. 자원에 대한 행위로 HTTP Method를 사용한다.
-   1. URI 이름에 Method를 넣으면 안된다. ex) userinfo/delete/3
-   2. URI에 동사 표현이 들어가면 안된다. 즉, CRUD 기능을 나타내는 것은 URI에 사용X ex) userinfo/show/3
-2. 슬래시 구분자는 계층관게를 나타낼 때 사용한다. ex) usertype/admin
-3. 마지막 문자로 슬래시를 포함하지 않는다.
-4. -(하이픈)은 URI 가독성을 높이는데 사용한다. -> ex) URI가 긴경우
-5. _(언더바)는 URI에 사용하지 않는다.
-6. URI 경로에는 소문자가 적합하다. 대문자는 피하도록 하자.
-7. 등
-
-## RESTful API란?
-REST의 아키텍처 스타일을 따른 시스템을 RESTful이란 용어로 표현된다.
-
-즉, RESTful API는 REST 원칙을 따르는 API를 의미한다.
+```kotlin
+여기서 Intent는 안드로이드의 Intent가 아니다. 자세한건 밑에서 설명하겠다.
+```
 
 
 
-# 문제
-1. 다음 URI는 REST 기반의 설계일까요?
-   - https://api.odcloud.kr/v1/get/page_info/page=1/per_page=10
-   
-2. 1번에 대한 문제의 답을 말하시고 설명하세요.
+### 상태 문제
+화면에 나타나는 모든 정보, 프로그레스바 상태, 버튼 활성화 등 상태를 관리하기 힘들어지고, 의도하지 않은 방향으로 제어가 된다면 이를 상태 문제라고 부른다.
+ex) 서버의 응답으로 리스트를 성공적으로 출력했지만, 프로그레스바가 계속 보이는 상황
+
+### 부수 효과
+안드로이드는 무수한 부수 효과들로 이루어져 있다. 서버 호출, DB접근 등 어떤 결과를 얻을지 예상할 수 없다. 그에 따라 상태 변경에 어려움을 느낌.
+위 문제점들을 해결하기 위해 MVI는 어떤 방식으로 동작할까?
+
+# MVI의 동작방식
+- Model : UI에 반영될 단일 상태(State)를 의미하고, 데이터 플로우가 단방향이라 불변성을 보장해야한다.
+- View : Activity, Fragment를 나타낸다. UI 그 자체이다.
+- Intent : 사용자의 Action과, 그에 따른 결과이다. 즉, 사용자가 취하는 행위이다.
+
+// 이미지 넣기
+
+예를 들어 유저가 새로고침 버튼을 통해서 화면 목록 갱신을 한다면, 유저의 Action(새로고침 변경)이 model(State)의 변경을 알리고, 새롭게 도출된
+model(State)이 view에 렌더링 되는 구조이다. 즉, 유저의 Action에 따라 상태가 변경된다.
+
+
+// 이미지 넣기
+
+위에서 설명했듯이 MVI는 UDF(Uni-directional-flow)이므로 위 그림처럼 표현된다. Intent로 부터 Model을 새로 생성하는 구조이므로 예측 가능한
+상태를 설정할 수 있고, 이로 인해 디버깅이 쉬워진다.
+
+# 어떻게 구현해야 할까?
+다른 MVXX 디자인 패턴과는 다르게, MVI의 I(Intent)는 앱의 상태를 바꾸려는 의도(intent)를 의미한다. 다른 MVXX 패턴들 과는 다르게
+구조적인 컴포넌트에 할당하지 않았다. -> 즉, 다른 아키텍처와는 다른 시각을 갖고 있고 이는 앱을 어떤 구조로 구성하는 것 보단, 앱의 상태(State)와 
+데이터의 흐름을 어떻게 다룰지에 대한 기술이다.
+```kotlin
+실제로 MVI패턴은 MVP, MVVM 기반으로 작성한 예제들이 많았다. 그만큼 MVI 패턴을 구현하기 위한 방법은 열려있다. -> 유연하다
+```
+
+// 이미지 
+
+위 사진은 MVVM 패턴에서 MVI가 어느 계층에 속하는지 보여준다.
+
+이제 상태문제는 해결이 되었다. 부수 문제는 어떻게 해결해야할까!?
+
+# Side Effects
+`View(Model(Intent()))` 구조로 잘 순환하길 기대하지만 실제론 다양한 부수적인 효과가 있다. 상태를 변경할 필요가 없는 이벤트가 필요
+할수 도 있기 때문. ex) Activity/Fragment의 이동, 토스트 노출 등이 부수적인 효과에 해당한다.
+
+그렇기 때문에 MVI를 언급할 땐 일반적으로 Side Effects라는 개념을 사용해서 이를 처리한다.
+
+
+
+# MVI 패턴을 구현하는 안드로이드 코틀린 코드
+```kotlin
+코드 구현해보고 작성할 것. Side Effects 포함
+```
+
+
+# MVI의 장단점
+장점
+ - 상태 관리가 쉽다
+ - 데이터가 단방향으로 흐른다
+ - 디버깅 및 테스트가 쉽다
+
+단점
+- 러닝커브가 가파르다 (공부하면서 느꼈다.)
+- 보일러 플레이트 코드가 양산된다
+- 작은 변경도 Intent로 처리해야한다.
+
+
+
+
+
+
+
+
+
+
+# 출처 
+https://www.charlezz.com/?p=46365
+
+https://velog.io/@jshme/MVI-Architecture-for-Android
+
+https://medium.com/myrealtrip-product/android-mvi-79809c5c14f0
+
+https://medium.com/myrealtrip-product/android-mvi-79809c5c14f0
 
 
