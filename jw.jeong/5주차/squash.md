@@ -83,5 +83,6 @@ REST의 아키텍처 스타일을 따른 시스템을 RESTful이란 용어로 �
 
 
 3. test1
+4. 3. test2
 
 
